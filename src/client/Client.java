@@ -2,6 +2,8 @@ package client;
 import java.io.File;
 import org.json.simple.JSONObject; 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*; 
 public class Client {
 	public void  displayOnConsole() throws IOException{
@@ -63,8 +65,24 @@ public class Client {
 		    }
 		    
     }
-	public void requestToJason(String RequiredTaskNumber,String path) {
-	
+	public void requestToJason(String RequiredTaskNumber,String path) throws IOException {
+		JSONObject obj = new JSONObject();
+		obj.put("Required Task Number", RequiredTaskNumber);
+	    obj.put("path", path);
+	    if(RequiredTaskNumber.equals("1")) {
+	    	obj.put("body", readTextFile(path));
+	    }
+	    else {
+	    	obj.put("body","");
+	    }
+	    connection(obj);
+	}
+	 public String readTextFile(String fileName) throws IOException {
+	        String content = new String(Files.readAllBytes(Paths.get(fileName)));
+	        return content;
+	    }
+	public void connection(JSONObject obj) {
+		
 	}
 	
 
