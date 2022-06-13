@@ -7,16 +7,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/.m2/repository/org/json/json/20190722/json-20190722.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/user/.m2/repository/org/json/json/20190722/json-20190722-sources.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/user/.m2/repository/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>

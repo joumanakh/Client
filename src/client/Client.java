@@ -64,7 +64,6 @@ public class Client {
 			break;
 		case "2":
 			System.out.println("Write the path of the local file on the PC");
-			System.out.println("Write the file path");
 			action=Action.fileUploading;
 		break;
 		case "3":
@@ -121,7 +120,7 @@ public class Client {
 			 r.setBody(readTextFile(path));
 		    }
 		 String jasonRequest=new Gson().toJson(r);
-	    connection();
+		 outputConnection(jasonRequest);
 	}
 	
 	
@@ -150,7 +149,7 @@ public class Client {
         e.printStackTrace();
     }
 		}
-	public void outputConnection(JSONObject obj) {
+	public void outputConnection(String obj) {
 		try {
 		 OutputStream os = socket.getOutputStream();
          DataOutputStream dos = new DataOutputStream(os);
