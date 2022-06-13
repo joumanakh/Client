@@ -17,11 +17,12 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*; 
 public class Client {
 	private static  int serverPort;
 	private  static String serverIP;
-	
+	private Socket socket ;
 	public int getServerPort() {
 		return serverPort;
 	}
@@ -75,7 +76,7 @@ public class Client {
 			action=Action.viewFolderContent;
 		break;
 		default:
-			System.out.println("Please enter a valid input (number from 1 to 4)!");
+			System.out.println("error 405 MethodNotAllowed -Please enter a valid input (number from 1 to 4)!");
 			RequiredTaskNumber1= sc.nextLine();
 			chosenAction(RequiredTaskNumber1);
 			return;
@@ -120,7 +121,7 @@ public class Client {
 			 r.setBody(readTextFile(path));
 		    }
 		 String jasonRequest=new Gson().toJson(r);
-	    connection(obj);
+	    connection();
 	}
 	
 	
@@ -129,38 +130,91 @@ public class Client {
 	        return content;
 	    }
 	 
+	 public void connection() {
+		 try { 
+			 socket = new Socket(serverIP,serverPort); }
+		 catch (IOException e) {
+			        e.printStackTrace();
+			    }
+	 }
 	 
-	public void connection(JSONObject obj) {
+	public void inputConnection() {
 		try { 
-		Socket socket = new Socket(serverIP,serverPort);
-		 OutputStream os = socket.getOutputStream();
-         DataOutputStream dos = new DataOutputStream(os);
-         dos.writeUTF(obj.toString());
-         //*********************************
          InputStream is = socket.getInputStream();
          DataInputStream dis = new DataInputStream(is);
          String s=dis.readUTF();
          JsonObject json = new JsonParser().parse(s).getAsJsonObject();
          responseToObject(json);
-	}   catch (IOException e) {
+	}  
+		catch (IOException e) {
         e.printStackTrace();
     }
 		}
+	public void outputConnection(JSONObject obj) {
+		try {
+		 OutputStream os = socket.getOutputStream();
+         DataOutputStream dos = new DataOutputStream(os);
+         dos.writeUTF(obj.toString());
+		}  
+		catch (IOException e) {
+        e.printStackTrace();
+		}
+	}
 	
 	
 	
 	public void responseToObject(JsonObject obj) {
 		Gson gson = new Gson(); 
 		Response r = gson.fromJson(obj, Response.class);
-		System.out.println(r.getBody());
+		//System.out.println(r.getBody());
 		displayResultsOnConsole(r);
 	}
 	
 	
 	public void displayResultsOnConsole(Response response){
-		if(response.getHeader().getResponseCode()==ResponseCode.ok) {
+		switch(response.getHeader().getResponseCode()) {
+		case ok:
+			lastImplementationForDisplay(response);
 			
+			break;
+		case notFound:
+			System.out.println("Error 404 (Not Found)");
+			break;
+		case InternalServerError:
+			System.out.println("Error 500 (Internal Server Error)");
+			break;
+		case NotImplemented:
+			System.out.println("Error 501 (Not Implemented)");
+			break;
 		}
+	
+	}
+	
+	public void lastImplementationForDisplay(Response response) {
+		switch(response.getHeader().getAction()) {
+		case downloadFile:
+			   try {
+					Files.write(Paths.get("C:\\Users\\user\\OneDrive\\Desktop\\client"), response.getBody().getBytes(), StandardOpenOption.CREATE);
+					System.out.println("downloaded successfully");
+				} catch (IOException e) {
+					System.out.println("Error download into local file");
+					// TODO Auto-generated catch block
+					}
+			break;
+		case fileUploading:
+			System.out.println("uploaded successfully");
+			break;
+		case deleteFile:
+			System.out.println("deleted successfully");
+			break;
+		case viewFolderContent:
+			System.out.println("Folder Content: ");
+			System.out.println(response.getBody());
+			break;
+		
+		}
+		
+		
 	}
 	
 	
